@@ -25,7 +25,7 @@
 
 /* Minimizado */
 #ip-location-overlay.ip-minimized {
-  width: 200px !important;
+  width: fit-content !important;
 }
 #ip-location-overlay.ip-minimized .ip-overlay-body {
   display: none !important;
@@ -83,6 +83,13 @@
 .ip-overlay-close:hover {
   background: rgba(255, 255, 255, 0.3) !important;
   transform: scale(1.05) !important;
+}
+
+.ip-content-title-minimized {
+  display: flex;
+  align-items: center;
+  margin-right: 5px;
+  gap: 4px;
 }
 
 /* ========== BODY ========== */

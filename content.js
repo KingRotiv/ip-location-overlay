@@ -311,7 +311,7 @@
     if (!isMinimized) {
         contentTitle.textContent = '🌐 Minha Conexão';
     } else {
-        contentTitle.innerHTML = `<span>${nowIP} <img id="ip-flag" class="ip-flag" src="${nowFlagSrc}" alt="${nowCountry}"></span>`;
+        contentTitle.innerHTML = `<div class="ip-content-title-minimized"><span>${nowIP}</span><img id="ip-flag" class="ip-flag" src="${nowFlagSrc}" alt="${nowCountry}"></div>`;
     }
 
     panel.classList.toggle('ip-minimized', isMinimized);
