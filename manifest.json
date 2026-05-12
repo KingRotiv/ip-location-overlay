@@ -1,0 +1,34 @@
+{
+  "manifest_version": 3,
+  "name": "IP Location Overlay",
+  "version": "1.0.0",
+  "description": "Exibe IP público e localização em painel fixo com múltiplas APIs de fallback",
+  "permissions": [],
+  "host_permissions": [
+    "https://freeipapi.com/*",
+    "http://ip-api.com/*",
+    "https://ip-api.com/*",
+    "https://ipinfo.io/*",
+    "https://api.ipify.org/*",
+    "https://flagcdn.com/*",
+    "https://api.myip.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "css": ["styles.css"],
+      "run_at": "document_end",
+      "all_frames": false
+    }
+  ],
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon32.png",
+    "64": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}
