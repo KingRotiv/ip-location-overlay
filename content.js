@@ -179,6 +179,8 @@
 
   let isMinimized = false;
   let currentApiIndex = 0;
+  let savedMinimizedPosition = null;
+  const fixedSpacing = 15;
 
   // ========== FUNÇÃO PRINCIPAL COM FALLBACK ==========
   async function fetchIPData() {
@@ -303,18 +305,38 @@
   
   // Minimizar/Expandir
   toggleBtn.addEventListener('click', () => {
+    const wasMinimized = isMinimized;
     isMinimized = !isMinimized;
     const nowIP = document.getElementById('ip-address').textContent || 'N/A';
     const nowCountry = document.getElementById('ip-country').textContent || 'N/A';
     const nowFlagSrc = document.getElementById('ip-flag').src || '';
+    const rect = panel.getBoundingClientRect();
+    const currentLeft = rect.left;
+    const currentTop = rect.top;
+
+    if (!savedMinimizedPosition) {
+      savedMinimizedPosition = { left: currentLeft, top: currentTop };
+    }
 
     if (!isMinimized) {
-        contentTitle.textContent = '🌐 Minha Conexão';
+      contentTitle.textContent = '🌐 Minha Conexão';
     } else {
-        contentTitle.innerHTML = `<div class="ip-content-title-minimized"><span>${nowIP}</span><img id="ip-flag" class="ip-flag" src="${nowFlagSrc}" alt="${nowCountry}"></div>`;
+      contentTitle.innerHTML = `<div class="ip-content-title-minimized"><span>${nowIP}</span><img id="ip-flag" class="ip-flag" src="${nowFlagSrc}" alt="${nowCountry}"></div>`;
     }
 
     panel.classList.toggle('ip-minimized', isMinimized);
+
+    if (isMinimized) {
+      panel.style.setProperty('left', `${savedMinimizedPosition.left}px`, 'important');
+      panel.style.setProperty('top', `${savedMinimizedPosition.top}px`, 'important');
+    } else {
+      const expandedLeft = clamp(savedMinimizedPosition.left, 0, window.innerWidth - panel.offsetWidth - fixedSpacing);
+      const expandedTop = clamp(savedMinimizedPosition.top, 0, window.innerHeight - panel.offsetHeight - fixedSpacing);
+      panel.style.setProperty('left', `${expandedLeft}px`, 'important');
+      panel.style.setProperty('top', `${expandedTop}px`, 'important');
+      panel.style.setProperty('right', 'auto', 'important');
+    }
+
     toggleBtn.textContent = isMinimized ? '+' : '−';
     toggleBtn.title = isMinimized ? 'Expandir' : 'Minimizar';
   });
@@ -378,22 +400,38 @@
     initialLeft = rect.left;
     initialTop = rect.top;
     
-    panel.style.transition = 'none';
-    panel.style.right = 'auto';
-    panel.style.left = `${initialLeft}px`;
-    panel.style.top = `${initialTop}px`;
+    panel.style.setProperty('transition', 'none');
+    panel.style.setProperty('right', 'auto', 'important');
+    panel.style.setProperty('left', `${initialLeft}px`, 'important');
+    panel.style.setProperty('top', `${initialTop}px`, 'important');
     panel.style.cursor = 'grabbing';
   });
+
+  function clamp(value, min, max) {
+    return Math.min(Math.max(value, min), max);
+  }
 
   document.addEventListener('mousemove', (e) => {
     if (!isDragging) return;
     e.preventDefault();
-    
+   
     const dx = e.clientX - startX;
     const dy = e.clientY - startY;
-    
-    panel.style.left = `${initialLeft + dx}px`;
-    panel.style.top = `${initialTop + dy}px`;
+    const panelWidth = panel.offsetWidth;
+    const panelHeight = panel.offsetHeight;
+    const minLeft = fixedSpacing;
+    const maxLeft = window.innerWidth - panelWidth + (dx < 0 ? fixedSpacing : -fixedSpacing);
+    const minTop = fixedSpacing;
+    const maxTop = window.innerHeight - panelHeight + (dy < 0 ? fixedSpacing : -fixedSpacing);
+    const newLeft = clamp(initialLeft + dx, minLeft, maxLeft);
+    const newTop = clamp(initialTop + dy, minTop, maxTop);
+
+    panel.style.setProperty('left', `${newLeft}px`, 'important');
+    panel.style.setProperty('top', `${newTop}px`, 'important');
+
+    if (isMinimized) {
+      savedMinimizedPosition = { left: newLeft, top: newTop };
+    }
   });
 
   document.addEventListener('mouseup', () => {
