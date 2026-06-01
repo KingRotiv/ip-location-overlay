@@ -389,7 +389,7 @@
   let startX, startY, initialLeft, initialTop;
   const header = panel.querySelector('.ip-overlay-header');
 
-  header.addEventListener('mousedown', (e) => {
+  header.addEventListener('pointerdown', (e) => {
     if (e.target.closest('button')) return; // Não arrasta se clicou em botão
     
     isDragging = true;
@@ -411,7 +411,7 @@
     return Math.min(Math.max(value, min), max);
   }
 
-  document.addEventListener('mousemove', (e) => {
+  document.addEventListener('pointermove', (e) => {
     if (!isDragging) return;
     e.preventDefault();
    
@@ -434,7 +434,7 @@
     }
   });
 
-  document.addEventListener('mouseup', () => {
+  document.addEventListener('pointerup', () => {
     if (isDragging) {
       isDragging = false;
       panel.style.transition = 'all 0.3s ease';
